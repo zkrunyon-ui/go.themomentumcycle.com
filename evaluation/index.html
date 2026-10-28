@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Business Evaluation | The Momentum Cycle</title>
+<meta name="description" content="A free, 3-minute evaluation of where your business is today and the exact next moves to reach the next stage." />
+<meta property="og:title" content="Business Evaluation | The Momentum Cycle" />
+<meta property="og:description" content="Find your business stage and your #1 constraint in 3 minutes. Free personalized roadmap." />
+<meta property="og:image" content="https://raw.githubusercontent.com/zkrunyon-ui/assets/main/logo.png" />
+<meta property="og:type" content="website" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #0F3D2E;
+    --green-2: #1F5A45;
+    --sage: #BFCFC4;
+    --sage-light: #DDE7DD;
+    --cream: #FAF7F0;
+    --text: #1A1A1A;
+    --muted: #5A6760;
+    --divider: #E5DFD0;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--cream);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .serif {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-feature-settings: "ss01" on;
+  }
+
+  /* Header */
+  header {
+    background: var(--cream);
+    border-bottom: 1px solid var(--divider);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  header .brand {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--green);
+    letter-spacing: -0.01em;
+  }
+  header .brand-sub {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  header img { height: 36px; opacity: 0.92; }
+
+  /* Layout: flex column so footer sticks to bottom */
+  main {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .wrap {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 56px 32px 80px;
+    flex: 1 0 auto;
+  }
+
+  /* Decorative SVG accents */
+  .deco {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0.5;
+    z-index: 0;
+  }
+  .stage-area { position: relative; }
+  .stage-area > * { position: relative; z-index: 1; }
+
+  /* Typography */
+  h1.hero {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    font-size: 52px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--green);
+    margin: 0 0 20px;
+  }
+  h1.hero em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--green-2);
+  }
+  .lead {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--text);
+    max-width: 580px;
+    margin: 0 0 36px;
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--green-2);
+    margin: 0 0 24px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 28px;
+    height: 1px;
+    background: var(--green-2);
+  }
+
+  /* Form */
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 460px;
+  }
+  .field label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  input[type="email"], input[type="text"] {
+    width: 100%;
+    padding: 16px 18px;
+    font-size: 16px;
+    font-family: inherit;
+    color: var(--text);
+    border: 1px solid var(--sage);
+    border-radius: 4px;
+    background: #fff;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  input[type="email"]:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(15,61,46,0.08);
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--green);
+    color: var(--cream);
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 15px 28px;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    margin-top: 22px;
+    transition: background .15s, transform .05s;
+  }
+  .btn:hover { background: var(--green-2); }
+  .btn:active { transform: translateY(1px); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--green);
+    border: 1px solid var(--sage);
+    padding: 14px 24px;
+  }
+  .btn-ghost:hover { background: var(--sage-light); border-color: var(--green-2); }
+
+  /* Hero (email step) */
+  .hero-single { max-width: 620px; }
+  @media (max-width: 720px) {
+    h1.hero { font-size: 38px; }
+    .wrap { padding: 32px 24px 56px; }
+    header { padding: 14px 20px; }
+  }
+
+  /* Progress */
+  .progress-bar {
+    height: 2px;
+    background: var(--sage-light);
+    border-radius: 0;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .progress-bar > div {
+    height: 100%;
+    background: var(--green);
+    width: 0%;
+    transition: width .3s ease;
+  }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 36px;
+  }
+  .progress-meta strong { color: var(--green); font-weight: 600; }
+
+  /* Question */
+  .q-num {
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .q-title {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    color: var(--green);
+    font-size: 32px;
+    line-height: 1.2;
+    margin: 0 0 28px;
+    letter-spacing: -0.01em;
+  }
+  .q-title em { font-style: italic; color: var(--green-2); }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    background: #fff;
+    border: 1px solid var(--sage);
+    border-radius: 3px;
+    padding: 18px 22px;
+    font-size: 15.5px;
+    line-height: 1.45;
+    cursor: pointer;
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: var(--text);
+  }
+  .option:hover {
+    border-color: var(--green-2);
+    background: #fff;
+    transform: translateX(2px);
+  }
+  .option .dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1.5px solid var(--sage);
+    flex-shrink: 0;
+    position: relative;
+    transition: border-color .15s;
+  }
+  .option:hover .dot { border-color: var(--green-2); }
+  .option.selected {
+    border-color: var(--green);
+    background: var(--sage-light);
+  }
+  .option.selected .dot {
+    border-color: var(--green);
+    background: var(--green);
+    box-shadow: inset 0 0 0 3px var(--sage-light);
+  }
+
+  .live-stage {
+    margin-top: 28px;
+    padding: 14px 18px;
+    background: var(--sage-light);
+    border-left: 2px solid var(--green-2);
+    font-size: 13px;
+    color: var(--green);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .live-stage em {
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 32px; }
+
+  /* Result card */
+  .result-card {
+    background: #fff;
+    border: 1px solid var(--divider);
+    border-radius: 4px;
+    padding: 40px;
+    margin: 28px 0 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .result-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--green) 0%, var(--green-2) 100%);
+  }
+  .result-stage-num {
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    color: var(--muted);
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .result-stage-name {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    color: var(--green);
+    font-size: 44px;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+    line-height: 1.05;
+  }
+  .result-desc {
+    font-size: 16.5px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  /* Auto-send status indicator on result screen */
+  .send-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 32px;
+    padding: 16px 20px;
+    border-radius: 3px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .send-status.sending {
+    background: var(--sage-light);
+    color: var(--green);
+    border-left: 2px solid var(--green-2);
+  }
+  .send-status.sent {
+    background: var(--sage-light);
+    color: var(--green);
+    border-left: 2px solid var(--green);
+  }
+  .send-status.error {
+    background: #FBEBEA;
+    color: #7A2820;
+    border-left: 2px solid #C0392B;
+  }
+  .send-status .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--sage);
+    border-top-color: var(--green);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+  .send-status .check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--green);
+    color: var(--cream);
+    flex-shrink: 0;
+  }
+  .send-status a { color: inherit; text-decoration: underline; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Success */
+  .success {
+    text-align: center;
+    padding: 80px 20px 40px;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+  .success .checkmark {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--green);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  /* Footer — anchored at bottom via flex layout */
+  footer {
+    flex-shrink: 0;
+    background: var(--green);
+    color: var(--cream);
+    padding: 32px;
+    text-align: center;
+  }
+  footer .foot-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  footer .foot-brand {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+  }
+  footer .foot-meta {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(250,247,240,0.7);
+  }
+  footer a { color: var(--cream); text-decoration: none; border-bottom: 1px solid rgba(250,247,240,0.3); }
+
+  /* Revamp additions */
+  .form-error { color: #8a2a1f; font-size: 14px; min-height: 20px; margin: 12px 0 0; }
+  .constraint-card {
+    background: var(--sage-light);
+    border-left: 3px solid var(--green);
+    border-radius: 4px;
+    padding: 24px 28px;
+    margin: 20px 0 8px;
+  }
+  .constraint-card .constraint-name { font-size: 30px; color: var(--green); font-weight: 500; margin-bottom: 10px; }
+  .constraint-card p { margin: 6px 0; }
+  .turnstile-box { margin: 16px 0 0; }
+  .option:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">The Momentum Cycle</div>
+    <span class="brand-sub">Alma Thurber · Founder</span>
+  </div>
+  <img src="https://raw.githubusercontent.com/zkrunyon-ui/assets/main/logo.png" alt="The Momentum Cycle" />
+</header>
+
+<main>
+  <div class="wrap" id="app"></div>
+</main>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-brand">The Momentum Cycle</div>
+    <div class="foot-meta"><a href="https://themomentumcycle.com">themomentumcycle.com</a></div>
+  </div>
+</footer>
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+<script>
+  // ---- Config: the two values to change per environment ----
+  const API_URL = "https://momentum-roadmap.zkrunyon.workers.dev/submit";
+  // Cloudflare's always-pass TEST key. Replace with the real site key from Cloudflare → Turnstile.
+  const TURNSTILE_SITE_KEY = "1x00000000000000000000AA";
+
+  const DIMENSIONS = [{"key": "product", "label": "Product", "options": ["I have nothing to sell yet", "I have something but it's not good enough to sell", "I have a product/service people pay for", "My product is proven and consistently delivers results", "My product line is fully systematized and scalable"]}, {"key": "marketing", "label": "Marketing", "options": ["No one knows I exist", "I tell people I know about what I do", "I run paid ads or have a consistent content strategy", "I have a marketing team and predictable lead flow", "My brand is a category leader in my market"]}, {"key": "sales", "label": "Sales", "options": ["I don't know how to sell", "I sell occasionally but inconsistently", "I close sales consistently and have a repeatable process", "I have a sales team with a documented process", "My sales org runs without me"]}, {"key": "customerService", "label": "Customer Service", "options": ["I have no customers yet", "I handle all customer issues myself", "I have basic support processes in place", "I have a support team and documented SOPs", "Customer success is a dedicated function with metrics"]}, {"key": "it", "label": "Information Technology (IT)", "options": ["I have only basic tools (computer, email, phone)", "I use free/basic software tools", "I have paid software stack that supports my operations", "I have an integrated tech stack managed by someone", "Technology is a competitive advantage in my business"]}, {"key": "recruiting", "label": "Recruiting", "options": ["It's just me", "I use freelancers occasionally", "I have 1\u20133 part-time or full-time employees", "I have a team of 4\u201320 with defined roles", "I have a recruiting function and talent pipeline"]}, {"key": "hr", "label": "Human Resources (HR)", "options": ["No formal structure at all", "I have basic agreements with contractors", "I have an employee handbook and basic HR processes", "I have an HR person or outsourced HR function", "Full HR department with culture and performance systems"]}, {"key": "finance", "label": "Finance", "options": ["My personal money is the business's money", "I have a business bank account and track expenses", "I have a bookkeeper and monthly financial reviews", "I have a CFO or controller and formal budgeting", "Finance function drives strategic decisions"]}];
+  const STAGE_NAMES = ["Improvise", "Monetize", "Advertise", "Stabilize", "Prioritize", "Productize", "Optimize", "Categorize", "Specialize", "Capitalize"];
+  const STAGE_DESCRIPTIONS = ["You're at the starting line: figuring out what to build and getting your first traction by giving value away for free.", "You have something people want, and now you're learning to charge for it and make your first sales.", "You can sell, but growth is word-of-mouth. It's time to put paid acquisition to work and engineer predictable demand.", "Revenue is coming in, but the wheels wobble under volume. Your job is to systematize delivery and remove single points of failure.", "You have too many things going at once. Focus is the unlock. One offer, one channel, one team goal.", "Your business runs on you. Productize delivery so the offering scales without your judgment in every transaction.", "Things work. Now you're squeezing out CAC, lifting LTV, and turning good operations into great ones.", "You're known in your niche. It's time to define the category and lead the conversation, not just compete in it.", "You operate as a real company: sales, marketing, finance, and people are full machines run by leaders, not founders.", "You're a category-defining business. The name equals the category, and capital allocation is the next frontier."];
+
+  // Display only. The server re-scores every submission and its answer is the one that counts.
+  function stageFromTotal(total) {
+    if (total <= 3)  return 0;
+    if (total <= 6)  return 1;
+    if (total <= 10) return 2;
+    if (total <= 13) return 3;
+    if (total <= 16) return 4;
+    if (total <= 19) return 5;
+    if (total <= 22) return 6;
+    if (total <= 25) return 7;
+    if (total <= 28) return 8;
+    return 9;
+  }
+
+  const state = {
+    name: "",
+    email: "",
+    answers: new Array(DIMENSIONS.length).fill(null),
+    step: "email",
+    qIndex: 0,
+    id: (crypto.randomUUID ? crypto.randomUUID() : "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16))),
+    sending: false,
+    widgetId: null,
+  };
+
+  const app = document.getElementById("app");
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
+  function render() {
+    if (state.step === "email")    return renderEmail();
+    if (state.step === "question") return renderQuestion();
+    if (state.step === "result")   return renderResult();
+  }
+
+  function renderEmail() {
+    app.innerHTML = `
+      <div class="hero-single">
+        <div class="eyebrow">A Free Business Diagnostic</div>
+        <h1 class="hero">Discover your <em>business stage.</em></h1>
+        <p class="lead">A short, honest evaluation of where your business is right now, and the exact next moves to graduate to the stage that follows. Inspired by Alex Hormozi's $100M Scaling Roadmap.</p>
+        <form id="emailForm" novalidate>
+          <div class="field">
+            <label for="nameInput">Your full name</label>
+            <input type="text" id="nameInput" placeholder="Jane Doe" required maxlength="100" autocomplete="name" value="${escapeHtml(state.name)}" />
+          </div>
+          <div class="field" style="margin-top:18px;">
+            <label for="emailInput">Your email</label>
+            <input type="email" id="emailInput" placeholder="you@company.com" required maxlength="254" autocomplete="email" value="${escapeHtml(state.email)}" />
+          </div>
+          <div class="form-error" id="formError" role="alert"></div>
+          <button class="btn" type="submit">Begin Evaluation <span aria-hidden="true">→</span></button>
+        </form>
+      </div>
+    `;
+    document.getElementById("emailForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("nameInput").value.trim();
+      const email = document.getElementById("emailInput").value.trim();
+      const err = document.getElementById("formError");
+      if (name.length < 2) { err.textContent = "Please enter your full name."; return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { err.textContent = "Please enter a valid email address."; return; }
+      state.name = name;
+      state.email = email;
+      state.step = "question";
+      state.qIndex = 0;
+      render();
+    });
+  }
+
+  function liveStageText() {
+    const answered = state.answers.filter(a => a !== null);
+    if (answered.length === 0) return "";
+    const total = answered.reduce((a, b) => a + b, 0);
+    const projected = stageFromTotal(total);
+    return `Tracking toward <em>Stage ${projected}: ${STAGE_NAMES[projected]}</em>`;
+  }
+
+  function renderQuestion() {
+    const i = state.qIndex;
+    const dim = DIMENSIONS[i];
+    const pct = Math.round(((i + (state.answers[i] !== null ? 1 : 0)) / DIMENSIONS.length) * 100);
+    const selected = state.answers[i];
+
+    app.innerHTML = `
+      <div class="progress-bar"><div style="width:${pct}%"></div></div>
+      <div class="progress-meta">
+        <span>Question <strong>${i + 1}</strong> of ${DIMENSIONS.length}</span>
+        <span>${escapeHtml(dim.label)}</span>
+      </div>
+      <div class="q-num">0${i + 1} — ${escapeHtml(dim.label)}</div>
+      <h2 class="q-title">How would you describe your <em>${escapeHtml(dim.label)}</em> today?</h2>
+      <div class="options" id="opts" role="radiogroup">
+        ${dim.options.map((opt, idx) => `
+          <div class="option ${selected === idx ? "selected" : ""}" data-idx="${idx}" role="radio" tabindex="0" aria-checked="${selected === idx}">
+            <div class="dot"></div>
+            <div>${escapeHtml(opt)}</div>
+          </div>
+        `).join("")}
+      </div>
+      ${liveStageText() ? `<div class="live-stage">${liveStageText()}</div>` : ""}
+      <div class="nav">
+        <button class="btn btn-ghost" id="backBtn">← Back</button>
+        <button class="btn" id="nextBtn" ${selected === null ? "disabled" : ""}>${i === DIMENSIONS.length - 1 ? "See My Stage" : "Next"} <span aria-hidden="true">→</span></button>
+      </div>
+    `;
+
+    document.querySelectorAll("#opts .option").forEach(el => {
+      const pick = () => { state.answers[i] = parseInt(el.dataset.idx, 10); render(); };
+      el.addEventListener("click", pick);
+      el.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
+    });
+    document.getElementById("backBtn").addEventListener("click", () => {
+      if (state.qIndex > 0) state.qIndex--; else state.step = "email";
+      render();
+    });
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      if (state.answers[i] === null) return;
+      if (state.qIndex < DIMENSIONS.length - 1) state.qIndex++;
+      else state.step = "result";
+      render();
+    });
+  }
+
+  function setStatus(kind, html) {
+    const el = document.getElementById("sendStatus");
+    if (!el) return;
+    el.className = "send-status " + kind;
+    el.innerHTML = html;
+  }
+
+  function renderConstraint(c) {
+    const el = document.getElementById("constraintCard");
+    if (!el || !c) return;
+    el.innerHTML = `
+      <div class="eyebrow" style="margin:0 0 14px;">Your #1 Constraint</div>
+      <div class="constraint-name serif">${escapeHtml(c.label)}</div>
+      <p><strong>Where it's holding you back:</strong> ${escapeHtml(c.problem)}</p>
+      <p><strong>Your next move:</strong> ${escapeHtml(c.toGraduate)}</p>`;
+    el.hidden = false;
+  }
+
+  function renderResult() {
+    const total = state.answers.reduce((a, b) => a + (b || 0), 0);
+    const stage = stageFromTotal(total);
+
+    app.innerHTML = `
+      <div class="eyebrow">Your Result</div>
+      <h1 class="hero" style="font-size:42px;">You're at <em>Stage ${stage}.</em></h1>
+      <div class="result-card">
+        <div class="result-stage-num">Stage 0${stage}</div>
+        <div class="result-stage-name serif">${escapeHtml(STAGE_NAMES[stage])}</div>
+        <div class="result-desc">${escapeHtml(STAGE_DESCRIPTIONS[stage])}</div>
+      </div>
+      <div class="constraint-card" id="constraintCard" hidden></div>
+      <div id="turnstileBox" class="turnstile-box"></div>
+      <div id="sendStatus" class="send-status sending">
+        <span class="spinner" aria-hidden="true"></span>
+        <span>Sending your personalized roadmap to <strong>${escapeHtml(state.email)}</strong>…</span>
+      </div>
+    `;
+    startCheck();
+  }
+
+  // Turnstile runs right before sending, so its token is fresh (tokens expire after 5 minutes).
+  function startCheck() {
+    if (state.sending) return;
+    if (!window.turnstile) { setTimeout(startCheck, 200); return; }
+    if (state.widgetId !== null) { try { turnstile.remove(state.widgetId); } catch (e) {} }
+    state.widgetId = turnstile.render("#turnstileBox", {
+      sitekey: TURNSTILE_SITE_KEY,
+      appearance: "interaction-only",   // invisible unless Cloudflare needs the person to click
+      callback: (token) => submit(token),
+      "error-callback": () => showError("The security check couldn't load. Check your connection and try again."),
+    });
+  }
+
+  function showError(msg) {
+    state.sending = false;
+    setStatus("error", `${escapeHtml(msg)} <a href="#" id="retryLink">Try again</a>.`);
+    const link = document.getElementById("retryLink");
+    if (link) link.addEventListener("click", (e) => {
+      e.preventDefault();
+      setStatus("sending", `<span class="spinner" aria-hidden="true"></span><span>Sending your personalized roadmap to <strong>${escapeHtml(state.email)}</strong>…</span>`);
+      startCheck();
+    });
+  }
+
+  async function submit(token) {
+    if (state.sending) return;
+    state.sending = true;
+    const scores = {};
+    DIMENSIONS.forEach((d, idx) => { scores[d.key] = state.answers[idx]; });
+    try {
+      const resp = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: state.id, name: state.name, email: state.email, scores, turnstileToken: token }),
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (data.result) renderConstraint(data.result.constraint);
+      if (data.success) {
+        setStatus("sent", `
+          <span class="check" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span>Sent. Check your inbox at <strong>${escapeHtml(state.email)}</strong>.</span>`);
+        state.sending = true; // done; never resend
+        return;
+      }
+      showError(data.error || "Something went wrong.");
+    } catch (err) {
+      showError("We couldn't reach the server. Check your connection.");
+    }
+  }
+
+  render();
+</script>
+</body>
+</html>

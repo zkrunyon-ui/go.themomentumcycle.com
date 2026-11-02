@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --green: #0F3D2E;
@@ -456,26 +457,43 @@
   .constraint-card p { margin: 6px 0; }
   .turnstile-box { margin: 16px 0 0; }
   .option:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+
+  /* Header + footer matched to themomentumcycle.com (Squarespace: Roboto, dark green #0A3323, cream text) */
+  header.site { background: #0A3323; border-bottom: 0; padding: 22px 4vw; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  header.site .site-title { font-family: 'Roboto', sans-serif; font-weight: 400; font-size: 1.7rem; letter-spacing: -.02em; line-height: 1.1;
+    text-transform: uppercase; color: #F9F7E0; text-decoration: none; }
+  header.site .site-cta { font-family: 'Roboto', sans-serif; font-size: 15px; font-weight: 500; letter-spacing: -.01em; color: #F9F7E0;
+    border: 1px solid #F9F7E0; border-radius: 300px; padding: 12px 22px; text-decoration: none; white-space: nowrap; transition: background .15s, color .15s; }
+  header.site .site-cta:hover { background: #F9F7E0; color: #0A3323; }
+  footer.site { background: #0A3323; color: #F9F7E0; padding: 40px 4vw; text-align: center; font-family: 'Roboto', sans-serif; flex-shrink: 0; }
+  footer.site .foot-title { font-size: 1.4rem; letter-spacing: -.02em; text-transform: uppercase; margin-bottom: 10px; }
+  footer.site a { color: #F9F7E0; font-size: 15px; letter-spacing: -.01em; text-decoration: none; border-bottom: 1px solid rgba(249,247,224,.4); }
+  @media (max-width: 720px) { header.site { padding: 16px 16px; } header.site .site-title { font-size: 1.15rem; } header.site .site-cta { padding: 9px 14px; font-size: 13px; } }
+
+  /* Evaluation page: photo background (alpine trail to the summit) under a green tint, content on a cream card.
+     Photo: Pascal Debrunner on Unsplash (Unsplash License). */
+  body.photo main { background: linear-gradient(rgba(10,51,35,.50), rgba(10,51,35,.68)), url("../assets/summit-path.jpg") center 32% / cover fixed; }
+  body.photo .wrap { background: var(--cream); border-radius: 6px; margin: 56px auto 64px; padding: 48px 48px 56px;
+    box-shadow: 0 18px 50px rgba(0,0,0,.25); max-width: 820px; }
+  @media (max-width: 720px) {
+    body.photo main { background-attachment: scroll; }
+    body.photo .wrap { margin: 20px 12px 28px; width: auto; padding: 28px 20px 36px; }
+  }
 </style>
 </head>
-<body>
-<header>
-  <div>
-    <div class="brand">The Momentum Cycle</div>
-    <span class="brand-sub">Alma Thurber · Founder</span>
-  </div>
-  <img src="https://raw.githubusercontent.com/zkrunyon-ui/assets/main/logo.png" alt="The Momentum Cycle" />
+<body class="photo">
+<header class="site">
+  <a class="site-title" href="https://www.themomentumcycle.com">The Momentum Cycle</a>
+  <a class="site-cta" href="https://www.skool.com/tandem-momentum-1737/about" target="_blank" rel="noopener">Join Our Community</a>
 </header>
 
 <main>
   <div class="wrap" id="app"></div>
 </main>
 
-<footer>
-  <div class="foot-inner">
-    <div class="foot-brand">The Momentum Cycle</div>
-    <div class="foot-meta"><a href="https://themomentumcycle.com">themomentumcycle.com</a></div>
-  </div>
+<footer class="site">
+  <div class="foot-title">The Momentum Cycle</div>
+  <a href="https://www.themomentumcycle.com">themomentumcycle.com</a>
 </footer>
 
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>

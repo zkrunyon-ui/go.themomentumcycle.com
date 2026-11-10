@@ -473,7 +473,12 @@
   .vlabel { font-weight: 600; font-size: 15.5px; }
   .vshort { font-size: 13.5px; color: var(--muted); line-height: 1.4; }
   .rank { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
-  .rank li { display: flex; align-items: center; gap: 14px; background: #fff; border: 1px solid var(--sage); border-radius: 4px; padding: 12px 14px; }
+  .rank { position: relative; }
+  .rank li { display: flex; align-items: center; gap: 14px; background: #fff; border: 1px solid var(--sage); border-radius: 4px; padding: 12px 14px;
+    position: relative; touch-action: pan-y; transition: box-shadow .18s ease, border-color .18s ease; }
+  .rank li.lift { box-shadow: 0 10px 24px rgba(15,61,46,.16); border-color: var(--green); z-index: 2; }
+  .rank li.dragging { box-shadow: 0 14px 30px rgba(15,61,46,.22); border-color: var(--green); z-index: 3; cursor: grabbing; transition: none; }
+  .grip { cursor: grab; color: var(--muted); font-size: 18px; line-height: 1; padding: 6px 2px; user-select: none; touch-action: none; letter-spacing: -2px; }
   .rnum { font-family: 'Fraunces', Georgia, serif; font-size: 24px; color: var(--green); width: 26px; text-align: center; }
   .rlabel { flex: 1; font-weight: 600; }
   .rbtns { display: flex; gap: 6px; }
@@ -616,22 +621,87 @@
       <h2 class="q-title">Now rank your 5 values from <em>most</em> to least important.</h2>
       <p class="sub">Having trouble? Imagine a moment where two of your values directly conflict, and ask yourself which one you would choose if you could only honor one.</p>
       <ol class="rank">${state.ranked.map((k, i) => `
-        <li><span class="rnum">${i + 1}</span><span class="rlabel">${escapeHtml(BY_KEY[k].label)}</span>
+        <li data-k="${k}"><span class="grip" aria-hidden="true" title="Drag to reorder">⋮⋮</span><span class="rnum">${i + 1}</span><span class="rlabel">${escapeHtml(BY_KEY[k].label)}</span>
           <span class="rbtns">
-            <button type="button" class="rb" data-i="${i}" data-d="-1" aria-label="Move ${escapeHtml(BY_KEY[k].label)} up" ${i === 0 ? "disabled" : ""}>▲</button>
-            <button type="button" class="rb" data-i="${i}" data-d="1" aria-label="Move ${escapeHtml(BY_KEY[k].label)} down" ${i === 4 ? "disabled" : ""}>▼</button>
+            <button type="button" class="rb" data-d="-1" aria-label="Move ${escapeHtml(BY_KEY[k].label)} up">▲</button>
+            <button type="button" class="rb" data-d="1" aria-label="Move ${escapeHtml(BY_KEY[k].label)} down">▼</button>
           </span></li>`).join("")}</ol>
       <div class="nav">
         <button class="btn btn-ghost" id="back">← Back</button>
         <button class="btn" id="next">Next <span aria-hidden="true">→</span></button>
       </div>`;
-    app.querySelectorAll(".rb").forEach(b => b.addEventListener("click", () => {
-      const i = +b.dataset.i, j = i + +b.dataset.d;
-      [state.ranked[i], state.ranked[j]] = [state.ranked[j], state.ranked[i]];
-      const y = window.scrollY; renderRank(); window.scrollTo(0, y);
-      const again = app.querySelector(`.rb[data-i="${j}"][data-d="${b.dataset.d}"]`) || app.querySelector(`.rb[data-i="${j}"]`);
-      if (again) again.focus();
-    }));
+    const list = app.querySelector(".rank");
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const items = () => [...list.children];
+    // Numbers, arrow states and the saved order always follow the DOM order.
+    const sync = () => {
+      items().forEach((li, i) => {
+        li.querySelector(".rnum").textContent = i + 1;
+        li.querySelector('.rb[data-d="-1"]').disabled = i === 0;
+        li.querySelector('.rb[data-d="1"]').disabled = i === items().length - 1;
+      });
+      state.ranked = items().map(li => li.dataset.k);
+    };
+    // FLIP: remember where every card was, change the order, then slide each card from its old spot to its new one.
+    const animate = (change, skip) => {
+      const before = new Map(items().map(li => [li, li.getBoundingClientRect().top]));
+      change(); sync();
+      if (reduce) return;
+      items().forEach(li => {
+        if (li === skip) return;
+        const dy = before.get(li) - li.getBoundingClientRect().top;
+        if (!dy) return;
+        li.style.transition = "none"; li.style.transform = `translateY(${dy}px)`;
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          li.style.transition = "transform .28s cubic-bezier(.2,.7,.2,1), box-shadow .18s ease, border-color .18s ease";
+          li.style.transform = "";
+        }));
+      });
+    };
+    sync();
+
+    list.addEventListener("click", (e) => {
+      const b = e.target.closest(".rb"); if (!b || b.disabled) return;
+      const li = b.closest("li"), d = +b.dataset.d;
+      const other = d < 0 ? li.previousElementSibling : li.nextElementSibling; if (!other) return;
+      li.classList.add("lift");
+      animate(() => d < 0 ? list.insertBefore(li, other) : list.insertBefore(other, li));
+      setTimeout(() => li.classList.remove("lift"), 320);
+      const again = li.querySelector(`.rb[data-d="${d}"]`);
+      (again && !again.disabled ? again : li.querySelector(`.rb[data-d="${-d}"]`)).focus();
+    });
+
+    // Drag a card by its grip (mouse or touch). The card follows the pointer; the others slide out of its way.
+    list.addEventListener("pointerdown", (e) => {
+      const grip = e.target.closest(".grip"); if (!grip) return;
+      const li = grip.closest("li"); e.preventDefault();
+      grip.setPointerCapture(e.pointerId);
+      let startY = e.clientY, offset = 0;
+      li.classList.add("dragging");
+      const move = (ev) => {
+        offset = ev.clientY - startY;
+        li.style.transform = `translateY(${offset}px)`;
+        const mid = li.getBoundingClientRect().top + li.offsetHeight / 2;
+        const prev = li.previousElementSibling, next = li.nextElementSibling;
+        if (next && mid > next.getBoundingClientRect().top + next.offsetHeight / 2) {
+          const top0 = li.getBoundingClientRect().top - offset;
+          animate(() => list.insertBefore(next, li), li);
+          const shift = li.getBoundingClientRect().top - offset - top0; startY += shift; offset -= shift;
+          li.style.transform = `translateY(${offset}px)`;
+        } else if (prev && mid < prev.getBoundingClientRect().top + prev.offsetHeight / 2) {
+          const top0 = li.getBoundingClientRect().top - offset;
+          animate(() => list.insertBefore(prev, li.nextElementSibling), li);   // move the neighbour, never the held card
+          const shift = li.getBoundingClientRect().top - offset - top0; startY += shift; offset -= shift;
+          li.style.transform = `translateY(${offset}px)`;
+        }
+      };
+      const end = () => {
+        window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", end); window.removeEventListener("pointercancel", end);
+        li.classList.remove("dragging");
+        li.style.transition = reduce ? "none" : "transform .2s ease"; li.style.transform = "";
+      };
+      window.addEventListener("pointermove", move); window.addEventListener("pointerup", end); window.addEventListener("pointercancel", end);
+    });
     document.getElementById("back").addEventListener("click", () => { state.step = "pick"; render(); });
     document.getElementById("next").addEventListener("click", () => { state.step = "details"; render(); });
   }

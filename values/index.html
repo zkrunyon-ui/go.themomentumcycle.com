@@ -545,6 +545,21 @@
   // Shuffle once per visit, like the old form, so position doesn't bias picks.
   const ORDER = VALUES.map(v => v.key).sort(() => Math.random() - 0.5);
 
+  // Where they came from (Nov 18): the ?src= tag on their link, else the site that sent them.
+  // Kept for the browser session so it survives a refresh; only the hostname of the referrer is kept.
+  const ATTR = (() => {
+    const K = "tmc_attr";
+    try { const saved = JSON.parse(sessionStorage.getItem(K) || "null"); if (saved && typeof saved === "object") return saved; } catch (e) {}
+    const p = new URLSearchParams(location.search);
+    let src = (p.get("src") || p.get("s") || p.get("utm_source") || "").trim().toLowerCase();
+    if (!/^[a-z0-9-]{1,24}$/.test(src)) src = "";
+    let refHost = "";
+    try { if (document.referrer) { const h = new URL(document.referrer).hostname.toLowerCase(); if (h && h !== location.hostname) refHost = h; } } catch (e) {}
+    const a = { src, refHost };
+    try { if (src || refHost) sessionStorage.setItem(K, JSON.stringify(a)); } catch (e) {}
+    return a;
+  })();
+
   const state = {
     step: "intro", name: "", email: "", spouseName: "", spouseEmail: "",
     picked: [], ranked: [], sending: false, widgetId: null,
@@ -798,7 +813,7 @@
     try {
       const resp = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: state.id, name: state.name, email: state.email, spouseName: state.spouseName,
-          spouseEmail: state.spouseEmail, values: state.ranked, turnstileToken: token }) });
+          spouseEmail: state.spouseEmail, values: state.ranked, turnstileToken: token, src: ATTR.src, refHost: ATTR.refHost }) });
       const data = await resp.json().catch(() => ({}));
       if (data.result && data.result.values) data.result.values.forEach(v => {
         const el = app.querySelector(`.vr-desc[data-k="${v.key}"]`); if (el) el.textContent = v.description; });

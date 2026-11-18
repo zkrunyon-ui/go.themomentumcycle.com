@@ -560,6 +560,10 @@
     return a;
   })();
 
+  // Tracked Skool links (Nov 18): every "community" link goes through /skool so the console counts it by channel.
+  const skoolHref = (via) => "/skool/?" + new URLSearchParams({ src: ATTR.src || "", ref: ATTR.refHost || "", via }).toString();
+  document.querySelectorAll("a.site-cta").forEach((a) => { a.href = skoolHref("values-header"); });
+
   const state = {
     step: "intro", name: "", email: "", spouseName: "", spouseEmail: "",
     picked: [], ranked: [], sending: false, widgetId: null,

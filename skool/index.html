@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>The Momentum Cycle community</title>
+<noscript><meta http-equiv="refresh" content="0;url=https://www.skool.com/tandem-momentum-1737/about"></noscript>
+<style>
+  body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; background:#F9F7E0; color:#0A3323;
+         font-family: Georgia, serif; text-align:center; padding:24px; box-sizing:border-box; }
+  a { color:#0A3323; }
+</style>
+</head>
+<body>
+<p>Taking you to The Momentum Cycle community&hellip;<br>
+<a href="https://www.skool.com/tandem-momentum-1737/about">Tap here if nothing happens.</a></p>
+<script>
+// Tracked Skool link: counts the visit by channel in the TMC console, then sends the person to the Skool About page.
+// Usage: /skool/?src=<channel tag>&via=<where the link sat>. No personal info is sent: just the tag, where, and the site they came from.
+(function () {
+  var SKOOL = "https://www.skool.com/tandem-momentum-1737/about";
+  var TRACK = "https://tmc-members.zkrunyon.workers.dev/track/skool";
+  var done = false;
+  function go() { if (!done) { done = true; location.replace(SKOOL); } }
+  try {
+    var q = new URLSearchParams(location.search);
+    var clean = function (v, n) { v = (v || "").toLowerCase().trim(); return /^[a-z0-9.-]+$/.test(v) ? v.slice(0, n) : ""; };
+    var src = clean(q.get("src") || q.get("s") || q.get("utm_source"), 24);
+    var ref = clean(q.get("ref"), 100);
+    try { var h = !ref && document.referrer ? new URL(document.referrer).hostname : ""; if (h && h !== location.hostname) ref = clean(h, 100); } catch (e) {}
+    // Came from our own evaluation page? Use the channel it already picked up.
+    if (!src) { try { var a = JSON.parse(sessionStorage.getItem("tmc_attr") || "{}"); src = clean(a.src, 24); ref = ref || clean(a.refHost, 100); } catch (e) {} }
+    var body = JSON.stringify({ src: src, via: clean(q.get("via"), 24) || "direct", ref: ref });
+    var sent = navigator.sendBeacon && navigator.sendBeacon(TRACK, body);
+    if (!sent) { fetch(TRACK, { method: "POST", body: body, keepalive: true, mode: "cors" }).catch(function () {}).finally(go); setTimeout(go, 600); return; }
+  } catch (e) {}
+  go();
+})();
+</script>
+</body>
+</html>

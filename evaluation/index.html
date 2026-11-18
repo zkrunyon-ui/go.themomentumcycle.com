@@ -458,6 +458,8 @@
   .constraint-card .constraint-name { font-size: 30px; color: var(--green); font-weight: 500; margin-bottom: 10px; }
   .constraint-card p { margin: 6px 0; }
   .turnstile-box { margin: 16px 0 0; }
+  .community-link { margin: 28px 0 0; padding-top: 18px; border-top: 1px solid rgba(10,51,35,0.15); font-size: 15px; line-height: 1.6; }
+  .community-link a { color: var(--green); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
   .option:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
 
   /* Header + footer matched to themomentumcycle.com (Squarespace: Roboto, dark green #0A3323, cream text) */
@@ -537,6 +539,10 @@
     try { if (src || refHost) sessionStorage.setItem(K, JSON.stringify(a)); } catch (e) {}
     return a;
   })();
+
+  // Tracked Skool links (Nov 18): every "community" link goes through /skool so the console counts it by channel.
+  const skoolHref = (via) => "/skool/?" + new URLSearchParams({ src: ATTR.src || "", ref: ATTR.refHost || "", via }).toString();
+  document.querySelectorAll("a.site-cta").forEach((a) => { a.href = skoolHref("eval-header"); });
 
   const state = {
     name: "",
@@ -687,6 +693,8 @@
         <span class="spinner" aria-hidden="true"></span>
         <span>Sending your personalized roadmap to <strong>${escapeHtml(state.email)}</strong>…</span>
       </div>
+      <p class="community-link">Want people in the same stage to work through this with?
+        <a href="${escapeHtml(skoolHref("eval-page"))}" target="_blank" rel="noopener">See The Momentum Cycle community &rarr;</a></p>
     `;
     startCheck();
   }

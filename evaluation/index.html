@@ -554,7 +554,17 @@
       (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16))),
     sending: false,
     widgetId: null,
+    focus: null,
   };
+
+  // Tie-break question (Nov 19): only asked when Sales and Marketing got the same answer.
+  // The server uses it only if those two tie for the #1 constraint.
+  const FOCUS_OPTIONS = [
+    ["marketing", "Getting enough people interested in what I offer"],
+    ["sales", "Turning interested people into paying customers"],
+  ];
+  const ansOf = (key) => state.answers[DIMENSIONS.findIndex(d => d.key === key)];
+  const needsFocus = () => ansOf("sales") !== null && ansOf("sales") === ansOf("marketing");
 
   const app = document.getElementById("app");
 
@@ -565,6 +575,7 @@
   function render() {
     if (state.step === "email")    return renderEmail();
     if (state.step === "question") return renderQuestion();
+    if (state.step === "focus")    return renderFocus();
     if (state.step === "result")   return renderResult();
   }
 
@@ -652,9 +663,41 @@
     document.getElementById("nextBtn").addEventListener("click", () => {
       if (state.answers[i] === null) return;
       if (state.qIndex < DIMENSIONS.length - 1) state.qIndex++;
-      else state.step = "result";
+      else state.step = needsFocus() ? "focus" : "result";
       render();
     });
+  }
+
+  function renderFocus() {
+    const selected = state.focus;
+    app.innerHTML = `
+      <div class="progress-bar"><div style="width:100%"></div></div>
+      <div class="progress-meta">
+        <span>One last question</span>
+        <span>Sales &amp; Marketing</span>
+      </div>
+      <div class="q-num">09 — Your Focus</div>
+      <h2 class="q-title">Which is holding you back <em>more</em> right now?</h2>
+      <div class="options" id="opts" role="radiogroup">
+        ${FOCUS_OPTIONS.map(([key, label]) => `
+          <div class="option ${selected === key ? "selected" : ""}" data-key="${key}" role="radio" tabindex="0" aria-checked="${selected === key}">
+            <div class="dot"></div>
+            <div>${escapeHtml(label)}</div>
+          </div>
+        `).join("")}
+      </div>
+      <div class="nav">
+        <button class="btn btn-ghost" id="backBtn">← Back</button>
+        <button class="btn" id="nextBtn" ${selected === null ? "disabled" : ""}>See My Stage <span aria-hidden="true">→</span></button>
+      </div>
+    `;
+    document.querySelectorAll("#opts .option").forEach(el => {
+      const pick = () => { state.focus = el.dataset.key; render(); };
+      el.addEventListener("click", pick);
+      el.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
+    });
+    document.getElementById("backBtn").addEventListener("click", () => { state.step = "question"; state.qIndex = DIMENSIONS.length - 1; render(); });
+    document.getElementById("nextBtn").addEventListener("click", () => { if (state.focus) { state.step = "result"; render(); } });
   }
 
   function setStatus(kind, html) {
@@ -732,7 +775,7 @@
       const resp = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: state.id, name: state.name, email: state.email, scores, turnstileToken: token, src: ATTR.src, refHost: ATTR.refHost }),
+        body: JSON.stringify({ id: state.id, name: state.name, email: state.email, scores, focus: needsFocus() ? state.focus : null, turnstileToken: token, src: ATTR.src, refHost: ATTR.refHost }),
       });
       const data = await resp.json().catch(() => ({}));
       if (data.result) renderConstraint(data.result.constraint);

@@ -27,11 +27,16 @@
     var q = new URLSearchParams(location.search);
     var clean = function (v, n) { v = (v || "").toLowerCase().trim(); return /^[a-z0-9.-]+$/.test(v) ? v.slice(0, n) : ""; };
     var src = clean(q.get("src") || q.get("s") || q.get("utm_source"), 24);
-    var ref = clean(q.get("ref"), 100);
+    // ref is either the site they came from (has a dot) or, on Facebook reply links, a 6-character Muse code.
+    var rawRef = clean(q.get("ref"), 100);
+    var code = /^[a-z0-9]{6}$/.test(rawRef) ? rawRef : "";
+    var ref = code ? "" : rawRef;
+    var qc = clean(q.get("code"), 6); if (!code && /^[a-z0-9]{6}$/.test(qc)) code = qc;
+    try { if (!code) { var sc = JSON.parse(sessionStorage.getItem("tmc_attr") || "{}").code; if (/^[a-z0-9]{6}$/.test(sc || "")) code = sc; } } catch (e) {}
     try { var h = !ref && document.referrer ? new URL(document.referrer).hostname : ""; if (h && h !== location.hostname) ref = clean(h, 100); } catch (e) {}
     // Came from our own evaluation page? Use the channel it already picked up.
     if (!src) { try { var a = JSON.parse(sessionStorage.getItem("tmc_attr") || "{}"); src = clean(a.src, 24); ref = ref || clean(a.refHost, 100); } catch (e) {} }
-    var body = JSON.stringify({ src: src, via: clean(q.get("via"), 24) || "direct", ref: ref });
+    var body = JSON.stringify({ src: src, via: clean(q.get("via"), 24) || "direct", ref: ref, code: code });
     var sent = navigator.sendBeacon && navigator.sendBeacon(TRACK, body);
     if (!sent) { fetch(TRACK, { method: "POST", body: body, keepalive: true, mode: "cors" }).catch(function () {}).finally(go); setTimeout(go, 600); return; }
   } catch (e) {}

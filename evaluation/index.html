@@ -529,19 +529,28 @@
   // Kept for the browser session so it survives a refresh; only the hostname of the referrer is kept.
   const ATTR = (() => {
     const K = "tmc_attr";
-    try { const saved = JSON.parse(sessionStorage.getItem(K) || "null"); if (saved && typeof saved === "object") return saved; } catch (e) {}
     const p = new URLSearchParams(location.search);
+    // Muse code (Nov 19): ?ref=<6 letters/digits> on a Facebook reply link, so the console can follow that prospect.
+    const urlCode = (p.get("ref") || "").trim().toLowerCase();
+    const code = /^[a-z0-9]{6}$/.test(urlCode) ? urlCode : "";
+    try {
+      const saved = JSON.parse(sessionStorage.getItem(K) || "null");
+      if (saved && typeof saved === "object") {
+        if (code && saved.code !== code) { saved.code = code; try { sessionStorage.setItem(K, JSON.stringify(saved)); } catch (e) {} }
+        return saved;
+      }
+    } catch (e) {}
     let src = (p.get("src") || p.get("s") || p.get("utm_source") || "").trim().toLowerCase();
     if (!/^[a-z0-9-]{1,24}$/.test(src)) src = "";
     let refHost = "";
     try { if (document.referrer) { const h = new URL(document.referrer).hostname.toLowerCase(); if (h && h !== location.hostname) refHost = h; } } catch (e) {}
-    const a = { src, refHost };
-    try { if (src || refHost) sessionStorage.setItem(K, JSON.stringify(a)); } catch (e) {}
+    const a = { src, refHost, code };
+    try { if (src || refHost || code) sessionStorage.setItem(K, JSON.stringify(a)); } catch (e) {}
     return a;
   })();
 
   // Tracked Skool links (Nov 18): every "community" link goes through /skool so the console counts it by channel.
-  const skoolHref = (via) => "/skool/?" + new URLSearchParams({ src: ATTR.src || "", ref: ATTR.refHost || "", via }).toString();
+  const skoolHref = (via) => "/skool/?" + new URLSearchParams({ src: ATTR.src || "", ref: ATTR.refHost || "", via, ...(ATTR.code ? { code: ATTR.code } : {}) }).toString();
   document.querySelectorAll("a.site-cta").forEach((a) => { a.href = skoolHref("eval-header"); });
 
   const state = {
@@ -775,7 +784,7 @@
       const resp = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: state.id, name: state.name, email: state.email, scores, focus: needsFocus() ? state.focus : null, turnstileToken: token, src: ATTR.src, refHost: ATTR.refHost }),
+        body: JSON.stringify({ id: state.id, name: state.name, email: state.email, scores, focus: needsFocus() ? state.focus : null, turnstileToken: token, src: ATTR.src, refHost: ATTR.refHost, code: ATTR.code || "" }),
       });
       const data = await resp.json().catch(() => ({}));
       if (data.result) renderConstraint(data.result.constraint);

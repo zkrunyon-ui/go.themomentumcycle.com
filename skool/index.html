@@ -36,7 +36,10 @@
     try { var h = !ref && document.referrer ? new URL(document.referrer).hostname : ""; if (h && h !== location.hostname) ref = clean(h, 100); } catch (e) {}
     // Came from our own evaluation page? Use the channel it already picked up.
     if (!src) { try { var a = JSON.parse(sessionStorage.getItem("tmc_attr") || "{}"); src = clean(a.src, 24); ref = ref || clean(a.refHost, 100); } catch (e) {} }
-    var body = JSON.stringify({ src: src, via: clean(q.get("via"), 24) || "direct", ref: ref, code: code });
+    // m=1: a member clicking after their own evaluation (not a visit we earned). From the link, or the session.
+    var m = q.get("m") === "1" ? 1 : 0;
+    try { if (!m && JSON.parse(sessionStorage.getItem("tmc_attr") || "{}").member === 1) m = 1; } catch (e) {}
+    var body = JSON.stringify({ src: src, via: clean(q.get("via"), 24) || "direct", ref: ref, code: code, m: m });
     var sent = navigator.sendBeacon && navigator.sendBeacon(TRACK, body);
     if (!sent) { fetch(TRACK, { method: "POST", body: body, keepalive: true, mode: "cors" }).catch(function () {}).finally(go); setTimeout(go, 600); return; }
   } catch (e) {}

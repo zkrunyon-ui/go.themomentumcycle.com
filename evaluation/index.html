@@ -550,7 +550,15 @@
   })();
 
   // Tracked Skool links (Nov 18): every "community" link goes through /skool so the console counts it by channel.
-  const skoolHref = (via) => "/skool/?" + new URLSearchParams({ src: ATTR.src || "", ref: ATTR.refHost || "", via, ...(ATTR.code ? { code: ATTR.code } : {}) }).toString();
+  const skoolHref = (via) => "/skool/?" + new URLSearchParams({ src: ATTR.src || "", ref: ATTR.refHost || "", via, ...(ATTR.code ? { code: ATTR.code } : {}), ...(ATTR.member ? { m: "1" } : {}) }).toString();
+  // Member (Nov 21): the CRM says this email is already a member. Their community clicks are tagged m=1 and not counted.
+  function markMember() {
+    ATTR.member = 1;
+    try { sessionStorage.setItem("tmc_attr", JSON.stringify(ATTR)); } catch (e) {}
+    document.querySelectorAll("a.site-cta").forEach((a) => { a.href = skoolHref("eval-header"); });
+    const p = document.querySelector(".community-link");
+    if (p) p.innerHTML = `You're already in the community. <a href="${escapeHtml(skoolHref("eval-page"))}" target="_blank" rel="noopener">Open it &rarr;</a>`;
+  }
   document.querySelectorAll("a.site-cta").forEach((a) => { a.href = skoolHref("eval-header"); });
 
   const state = {
@@ -788,6 +796,7 @@
       });
       const data = await resp.json().catch(() => ({}));
       if (data.result) renderConstraint(data.result.constraint);
+      if (data.member === true) markMember();
       if (data.success) {
         setStatus("sent", `
           <span class="check" aria-hidden="true">
